@@ -4,7 +4,7 @@ from app.database import db
 from app.models.ride import RideCreate
 from app.utils.serializers import sanitize_doc
 from bson import ObjectId
-from datetime import datetime
+from datetime import datetime, date
 
 router = APIRouter(prefix="/rides")
 
@@ -17,6 +17,12 @@ async def create_ride(
 
     if current_user["role"] not in ["driver", "both"]:
         raise HTTPException(status_code=403, detail="Only drivers can create rides")
+    
+    if ride.seats_total<=0:
+        raise HTTPException(status_code=400, detail="seats total must be greater than 0")
+    
+    if ride.date < date.today():
+        raise HTTPException(status_code=400, detail="Ride date must be today or in the future")
 
     new_ride = {
         "driver_id": current_user["id"],   # <-- auto from token
