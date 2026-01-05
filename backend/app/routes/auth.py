@@ -4,6 +4,8 @@ from app.models.user import UserCreate, UserLogin
 from app.utils.auth import hash_password, verify_password, create_access_token
 from app.utils.serializers import sanitize_doc
 from datetime import datetime
+from fastapi import Depends
+from app.utils.deps import get_current_user
 
 router = APIRouter(prefix="/auth")
 
@@ -58,3 +60,6 @@ async def login(data: UserLogin):
 
     return { "access_token": token, "user": safe_user }
 
+@router.get("/me")
+async def get_me(current_user: dict = Depends(get_current_user)):
+    return current_user

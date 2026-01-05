@@ -32,7 +32,7 @@ async def request_seat(
     if ride["status"] != "open":
         raise HTTPException(status_code=400, detail="Ride is not open for booking")
 
-    if ride["date"] < date.today():
+    if ride["date"].date() < date.today():
         raise HTTPException(
             status_code=400,
             detail="Cannot request seats for a past ride"
@@ -44,9 +44,6 @@ async def request_seat(
     # 6. Passenger cannot request own ride
     if ride["driver_id"] == current_user["id"]:
         raise HTTPException(status_code=400, detail="You cannot request your own ride")
-    
-    from datetime import date
-
 
 
     # 7. Prevent duplicate requests
@@ -69,6 +66,29 @@ async def request_seat(
 
     return {"message": "Seat request submitted successfully"}
 
+@router.get("/my")
+async def my_requests(current_user: dict = Depends(get_current_user)):
+    if current_user["role"] not in ["passenger", "both"]:
+        raise HTTPException(status_code=403, detail="Only passengers can view requests")
+
+    cursor = db.ride_requests.find(
+        {"passenger_id": current_user["id"]}
+    )
+
+    requests = [sanitize_doc(r) for r in await cursor.to_list(100)]
+
+    for r in requests:
+        r["id"] = r.pop("_id")
+
+        # attach ride details (basic)
+        ride = await db.rides.find_one({"_id": ObjectId(r["ride_id"])})
+        if ride:
+            r["from_text"] = ride["from_text"]
+            r["to_text"] = ride["to_text"]
+            r["date"] = ride["date"]
+            r["time"] = ride["time"]
+
+    return requests
 
 
 @router.get("/ride/{ride_id}")
@@ -83,9 +103,8 @@ async def get_ride_requests(
     if ride["driver_id"] != current_user["id"]:
         raise HTTPException(status_code=403, detail="Not authorized")
     
-    from datetime import date
 
-    if ride["status"] in ["open", "full"] and ride["date"] < date.today():
+    if ride["status"] in ["open", "full"] and ride["date"].date() < date.today():
         await db.rides.update_one(
             {"_id": ride["_id"]},
             {"$set": {"status": "completed"}}

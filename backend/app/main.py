@@ -2,9 +2,22 @@ from fastapi import FastAPI
 from app.routes import auth, rides, requests, user
 from fastapi.openapi.models import APIKey, APIKeyIn
 from fastapi.openapi.utils import get_openapi
+from fastapi.middleware.cors import CORSMiddleware
 
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 
 def custom_openapi():
     if app.openapi_schema:

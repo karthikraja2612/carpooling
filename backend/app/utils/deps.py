@@ -40,6 +40,9 @@ async def get_current_user(token: str = Depends(get_token_header)):
     if not user:
         raise HTTPException(status_code=401, detail="User not found")
 
-    # convert ObjectId to string
+        # convert ObjectId to string
     user["id"] = str(user["_id"])
+    user.pop("_id", None)
+    user.pop("password_hash", None)
     return user
+

@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 from typing import Optional
+from datetime import date
 
 class RideCreate(BaseModel):
     from_text: str
@@ -8,7 +9,7 @@ class RideCreate(BaseModel):
     from_lng: float
     to_lat: float
     to_lng: float
-    date: str
+    date: date
     time: str
     seats_total: int
     price_per_seat: Optional[float] = None

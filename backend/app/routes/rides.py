@@ -4,9 +4,9 @@ from app.database import db
 from app.models.ride import RideCreate
 from app.utils.serializers import sanitize_doc
 from bson import ObjectId
-from datetime import datetime, date
+from datetime import datetime, date, timedelta
 
-router = APIRouter(prefix="/rides")
+router = APIRouter(prefix="/rides", tags=["Rides"])
 
 
 @router.post("/")
@@ -32,7 +32,7 @@ async def create_ride(
         "from_lng": ride.from_lng,
         "to_lat": ride.to_lat,
         "to_lng": ride.to_lng,
-        "date": ride.date,
+        "date": datetime.combine(ride.date,datetime.min.time()),
         "time": ride.time,
         "seats_total": ride.seats_total,
         "seats_available": ride.seats_total,
@@ -49,26 +49,77 @@ async def create_ride(
     created["id"] = created.pop("_id")
     return created
 
-
 @router.get("/")
-async def search_rides(from_text: str = None, to_text: str = None, date: str = None):
+async def search_rides(
+    from_text: str | None = None,
+    to_text: str | None = None,
+    date: str | None = None,
+):
     query = {}
 
     if from_text:
         query["from_text"] = {"$regex": from_text, "$options": "i"}
+
     if to_text:
         query["to_text"] = {"$regex": to_text, "$options": "i"}
-    if date:
-        query["date"] = date
 
-    rides_cursor = db.rides.find(query)
-    rides = [sanitize_doc(r) for r in await rides_cursor.to_list(200)]
+    if date:
+        try:
+            start = datetime.fromisoformat(date)
+            end = start + timedelta(days=1)
+            query["date"] = {"$gte": start, "$lt": end}
+        except:
+            raise HTTPException(status_code=400, detail="Invalid date format")
+
+    cursor = db.rides.find(query)
+    rides = [sanitize_doc(r) for r in await cursor.to_list(200)]
 
     for r in rides:
         r["id"] = r.pop("_id")
 
     return rides
 
+# @router.get("/")
+# async def search_rides(from_text: str = None, to_text: str = None, date: str = None):
+#     query = {}
+
+#     if from_text:
+#         query["from_text"] = {"$regex": from_text, "$options": "i"}
+#     if to_text:
+#         query["to_text"] = {"$regex": to_text, "$options": "i"}
+#     if date:
+#         start = datetime.fromisoformat(date)
+#         end = start + timedelta(days=1)
+
+#         query["date"] = {
+#             "$gte": start,
+#             "$lt": end
+#         }
+
+#     rides_cursor = db.rides.find(query)
+#     rides = [sanitize_doc(r) for r in await rides_cursor.to_list(200)]
+
+#     for r in rides:
+#         r["id"] = r.pop("_id")
+
+#     return rides
+
+@router.get("/my")
+async def get_my_rides(current_user: dict = Depends(get_current_user)):
+    # Only drivers can view their rides
+    if current_user["role"] not in ["driver", "both"]:
+        raise HTTPException(
+            status_code=403,
+            detail="Only drivers can view their rides"
+        )
+
+    cursor = db.rides.find({"driver_id": current_user["id"]})
+    rides = [sanitize_doc(r) for r in await cursor.to_list(100)]
+
+    for r in rides:
+        r["id"] = r.pop("_id")
+
+    return rides
 
 @router.get("/{ride_id}")
 async def get_single_ride(ride_id: str):
@@ -83,3 +134,4 @@ async def get_single_ride(ride_id: str):
     ride = sanitize_doc(ride)
     ride["id"] = ride.pop("_id")
     return ride
+
