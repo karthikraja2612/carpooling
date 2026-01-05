@@ -74,34 +74,54 @@ function RideRequests() {
   if (loading) return <p>Loading requests...</p>;
 
   return (
-    <div>
-      <h2>Ride Requests</h2>
+  <div className="max-w-4xl mx-auto px-6 py-6">
+    {/* Header */}
+    <div className="mb-8">
+      <h2 className="text-xl font-semibold mb-1">
+        Ride Requests
+      </h2>
+      <p className="text-sm text-slate-500">
+        Review and manage passenger requests
+      </p>
+    </div>
 
-      {error && <p style={{ color: "red" }}>{error}</p>}
-      {message && <p style={{ color: "green" }}>{message}</p>}
+    {/* Feedback */}
+    {error && <p className="error mb-4">{error}</p>}
+    {message && <p className="success mb-4">{message}</p>}
 
-      {requests.length === 0 ? (
+    {/* Empty / List */}
+    {requests.length === 0 ? (
+      <div className="empty-state">
         <p>No requests yet</p>
-      ) : (
-        requests.map((req) => (
+        <span>Passenger requests will appear here.</span>
+      </div>
+    ) : (
+      <div className="flex flex-col gap-4">
+        {requests.map((req) => (
           <div
             key={req.id}
-            style={{
-              border: "1px solid #ccc",
-              padding: "10px",
-              marginBottom: "10px",
-            }}
+            className="card flex items-center justify-between gap-6"
           >
-            <p>
-              <strong>Passenger:</strong> {req.passenger_id}
-            </p>
-            <p>
-              <strong>Status:</strong> {req.status}
-            </p>
+            {/* Left */}
+            <div className="flex flex-col gap-1">
+              <span className="text-xs uppercase tracking-wide text-slate-500">
+                Passenger ID
+              </span>
 
+              <span className="font-semibold">
+                {req.passenger_id}
+              </span>
+
+              <span className={`status-badge ${req.status}`}>
+                {req.status}
+              </span>
+            </div>
+
+            {/* Actions */}
             {req.status === "pending" && (
-              <>
+              <div className="flex gap-2">
                 <button
+                  className="primary"
                   onClick={() => acceptRequest(req.id)}
                   disabled={actionLoading}
                 >
@@ -109,19 +129,21 @@ function RideRequests() {
                 </button>
 
                 <button
+                  className="ghost"
                   onClick={() => rejectRequest(req.id)}
                   disabled={actionLoading}
-                  style={{ marginLeft: "10px" }}
                 >
                   Reject
                 </button>
-              </>
+              </div>
             )}
           </div>
-        ))
-      )}
-    </div>
-  );
+        ))}
+      </div>
+    )}
+  </div>
+);
+
 }
 
 export default RideRequests;

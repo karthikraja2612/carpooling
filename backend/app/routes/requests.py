@@ -75,20 +75,25 @@ async def my_requests(current_user: dict = Depends(get_current_user)):
         {"passenger_id": current_user["id"]}
     )
 
-    requests = [sanitize_doc(r) for r in await cursor.to_list(100)]
+    results = []
 
-    for r in requests:
-        r["id"] = r.pop("_id")
+    async for req in cursor:
+        ride = await db.rides.find_one({"_id": ObjectId(req["ride_id"])})
+        if not ride:
+            continue
 
-        # attach ride details (basic)
-        ride = await db.rides.find_one({"_id": ObjectId(r["ride_id"])})
-        if ride:
-            r["from_text"] = ride["from_text"]
-            r["to_text"] = ride["to_text"]
-            r["date"] = ride["date"]
-            r["time"] = ride["time"]
+        results.append({
+            "id": str(req["_id"]),
+            "status": req["status"],
+            "from_text": ride["from_text"],
+            "to_text": ride["to_text"],
+            "date": ride["date"],
+            "time": ride["time"],
+            "ride_status": ride["status"]
+        })
 
-    return requests
+    return results
+
 
 
 @router.get("/ride/{ride_id}")

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import api from "../api/axios";
+import RideCard from "../components/RideCard";
 
 function RideList() {
   const [rides, setRides] = useState([]);
@@ -13,7 +14,6 @@ function RideList() {
     setError("");
     try {
       const params = {};
-
       if (fromText) params.from_text = fromText;
       if (toText) params.to_text = toText;
       if (date) params.date = date;
@@ -25,7 +25,6 @@ function RideList() {
     }
   };
 
-  // Load all rides on first render
   useEffect(() => {
     fetchRides();
   }, []);
@@ -33,7 +32,6 @@ function RideList() {
   const requestSeat = async (rideId) => {
     setError("");
     setMessage("");
-
     try {
       await api.post(`/requests/ride/${rideId}`);
       setMessage("Seat request sent");
@@ -42,66 +40,91 @@ function RideList() {
     }
   };
 
-  return (
-    <div>
-      <h2>Available Rides</h2>
+return (
+  <div className="max-w-6xl mx-auto px-6 py-6">
+    <h2 className="text-xl font-semibold mb-6">
+      Available Rides
+    </h2>
 
-      {/* SEARCH CONTROLS */}
-      <div style={{ marginBottom: "15px" }}>
-        <input
-          placeholder="From"
-          value={fromText}
-          onChange={(e) => setFromText(e.target.value)}
-        />
+    <div className="grid grid-cols-[260px_1fr] gap-6">
+      {/* FILTER PANEL */}
+      <aside className="card flex flex-col gap-4">
+        <h3 className="text-base font-semibold">
+          Filter
+        </h3>
 
-        <input
-          placeholder="To"
-          value={toText}
-          onChange={(e) => setToText(e.target.value)}
-        />
+        <div className="flex flex-col gap-1">
+          <label className="text-sm text-slate-500">
+            From
+          </label>
+          <input
+            placeholder="From"
+            value={fromText}
+            onChange={(e) => setFromText(e.target.value)}
+          />
+        </div>
 
-        <input
-          type="date"
-          value={date}
-          onChange={(e) => setDate(e.target.value)}
-        />
+        <div className="flex flex-col gap-1">
+          <label className="text-sm text-slate-500">
+            To
+          </label>
+          <input
+            placeholder="To"
+            value={toText}
+            onChange={(e) => setToText(e.target.value)}
+          />
+        </div>
 
-        <button onClick={fetchRides}>Search</button>
-      </div>
+        <div className="flex flex-col gap-1">
+          <label className="text-sm text-slate-500">
+            Date
+          </label>
+          <input
+            type="date"
+            value={date}
+            onChange={(e) => setDate(e.target.value)}
+          />
+        </div>
 
-      {error && <p style={{ color: "red" }}>{error}</p>}
-      {message && <p style={{ color: "green" }}>{message}</p>}
+        <button
+          className="primary mt-2"
+          onClick={fetchRides}
+          disabled={!fromText && !toText && !date}
+        >
+          Search
+        </button>
+      </aside>
 
-      {rides.length === 0 ? (
-        <p>No rides available</p>
-      ) : (
-        rides.map((ride) => (
-          <div
-            key={ride.id}
-            style={{
-              border: "1px solid #ccc",
-              padding: "10px",
-              marginBottom: "10px",
-            }}
-          >
-            <p>
-              <strong>{ride.from_text}</strong> →{" "}
-              <strong>{ride.to_text}</strong>
-            </p>
-            <p>Date: {ride.date}</p>
-            <p>Time: {ride.time}</p>
-            <p>Seats available: {ride.seats_available}</p>
+      {/* RESULTS */}
+      <section className="flex flex-col gap-4">
+        {error && <p className="error">{error}</p>}
+        {message && <p className="success">{message}</p>}
 
-            {ride.seats_available > 0 && ride.status === "open" && (
-              <button onClick={() => requestSeat(ride.id)}>
-                Request Seat
-              </button>
-            )}
+        {rides.length === 0 && !error ? (
+          <div className="flex flex-col gap-4">
+            {[1, 2, 3].map((i) => (
+              <div
+                key={i}
+                className="card skeleton skeleton-card"
+              />
+            ))}
           </div>
-        ))
-      )}
+        ) : (
+          <div className="flex flex-col gap-4">
+            {rides.map((ride) => (
+              <RideCard
+                key={ride.id}
+                ride={ride}
+                onRequestSeat={requestSeat}
+              />
+            ))}
+          </div>
+        )}
+      </section>
     </div>
-  );
+  </div>
+);
+
 }
 
 export default RideList;

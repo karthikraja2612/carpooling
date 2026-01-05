@@ -1,68 +1,412 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
+  --bg: #f7f9fb;
+  --surface: #ffffff;
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  --primary: #0f766e;
+  --primary-hover: #115e59;
+  --accent: #4f46e5;
 
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  --text: #0f172a;
+  --muted: #64748b;
+  --border: #e5e7eb;
+
+  --danger: #dc2626;
+  --success: #16a34a;
+
+  --radius: 12px;
+
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.06);
+  --shadow-md: 0 8px 24px rgba(15,23,42,0.06);
+
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    Roboto, Helvetica, Arial, sans-serif;
 }
 
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
+/* =====================
+   Reset & Base
+===================== */
+* {
+  box-sizing: border-box;
 }
 
 body {
   margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
   min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
 }
 
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
+h1, h2, h3 {
+  margin: 0 0 0.75rem;
+  font-weight: 600;
 }
 
+h2 { font-size: 1.35rem; }
+h3 { font-size: 1rem; }
+
+p {
+  margin: 0.25rem 0;
+  line-height: 1.5;
+  color: var(--muted);
+}
+
+a {
+  color: var(--primary);
+  text-decoration: none;
+}
+
+/* =====================
+   Form Elements
+===================== */
+input {
+  width: 100%;
+  padding: 0.6rem 0.7rem;
+  font-size: 0.95rem;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+}
+
+input:focus {
+  outline: none;
+  border-color: var(--primary);
+}
+
+/* =====================
+   Buttons
+===================== */
 button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
+  border: none;
   cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
+  font-size: 0.95rem;
+  padding: 0.6rem 1rem;
+  border-radius: var(--radius);
+  background: var(--primary);
+  color: white;
+  transition: background 0.15s ease, transform 0.1s ease;
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
+button:hover {
+  background: var(--primary-hover);
+}
+
+button:active {
+  transform: translateY(1px);
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+button.primary {
+  background: var(--primary);
+}
+
+button.secondary {
+  background: rgba(79, 70, 229, 0.08);
+  color: var(--accent);
+}
+
+button.secondary:hover {
+  background: rgba(79, 70, 229, 0.14);
+}
+
+button.ghost {
+  background: transparent;
+  color: var(--muted);
+}
+
+button.ghost:hover {
+  background: rgba(0,0,0,0.04);
+}
+
+/* =====================
+   Layout Containers
+===================== */
+.container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 1.5rem;
+}
+
+.centered-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* =====================
+   Card
+===================== */
+.card {
+  background: var(--surface);
+  border-radius: var(--radius);
+  padding: 1rem;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-md);
+}
+
+/* =====================
+   App Shell
+===================== */
+.app-shell {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.app-header {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+
+.header-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0.75rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.logo {
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  color: var(--primary);
+  letter-spacing: 0.3px;
+}
+
+.nav-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.logout-ghost {
+  background: transparent;
+  color: var(--danger);
+}
+
+.logout-ghost:hover {
+  background: rgba(220,38,38,0.08);
+}
+
+.app-main {
+  flex: 1;
+}
+
+/* =====================
+   Dashboard
+===================== */
+.dashboard-header {
+  margin-bottom: 2rem;
+}
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1.5rem;
+}
+
+/* =====================
+   Search & Ride List
+===================== */
+.search-bar {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.5rem;
+}
+
+.search-bar input {
+  max-width: 200px;
+}
+
+.search-layout {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+.filter-group label {
+  display: block;
+  font-size: 0.85rem;
+  margin-bottom: 0.25rem;
+}
+
+.ride-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* =====================
+   Ride Card
+===================== */
+.ride-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.25rem;
+}
+
+.ride-route {
+  font-size: 1.05rem;
+  font-weight: 600;
+}
+
+.ride-route .arrow {
+  margin: 0 0.25rem;
+  color: var(--accent);
+}
+
+.ride-meta {
+  font-size: 0.85rem;
+  letter-spacing: 0.2px;
+}
+
+.ride-side {
+  text-align: right;
+  min-width: 140px;
+}
+
+/* =====================
+   Skeletons
+===================== */
+.skeleton {
+  border-radius: var(--radius);
+  background: linear-gradient(
+    90deg,
+    #f3f4f6 25%,
+    #e5e7eb 37%,
+    #f3f4f6 63%
+  );
+  background-size: 400% 100%;
+  animation: shimmer 1.4s ease infinite;
+}
+
+@keyframes shimmer {
+  0% { background-position: 100% 0; }
+  100% { background-position: -100% 0; }
+}
+
+.skeleton-card {
+  height: 88px;
+}
+
+/* =====================
+   Create Ride
+===================== */
+.create-ride-wrapper {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.create-ride-form {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.form-row.narrow {
+  grid-template-columns: 140px 180px;
+}
+
+/* =====================
+   My Rides
+===================== */
+.my-rides-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.my-ride-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.status-badge {
+  padding: 0.25rem 0.6rem;
+  font-size: 0.75rem;
+  border-radius: 999px;
+  text-transform: capitalize;
+}
+
+.status-badge.open {
+  background: rgba(22,163,74,0.1);
+  color: #166534;
+}
+
+.status-badge.closed {
+  background: rgba(220,38,38,0.1);
+  color: #991b1b;
+}
+
+/* =====================
+   Utility
+===================== */
+.error { color: var(--danger); }
+.success { color: var(--success); }
+
+.empty-state {
+  text-align: center;
+  padding: 3rem 1rem;
+}
+/* ---------- Ride Requests ---------- */
+.requests-header {
+  margin-bottom: 2rem;
+}
+
+.requests-header p {
+  color: var(--muted);
+}
+
+.requests-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.request-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.request-main {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.request-passenger {
+  font-size: 0.75rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.request-id {
+  font-weight: 600;
+}
+
+.request-actions {
+  display: flex;
+  gap: 0.5rem;
 }

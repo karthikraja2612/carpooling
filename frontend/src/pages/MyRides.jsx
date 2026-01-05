@@ -30,49 +30,75 @@ function MyRides() {
   if (loading) return <p>Loading your rides...</p>;
 
   return (
-    <div>
-      <h2>My Rides</h2>
+  <div className="max-w-5xl mx-auto px-6 py-6">
+    {/* Header */}
+    <div className="mb-8">
+      <h2 className="text-xl font-semibold mb-1">
+        My Rides
+      </h2>
+      <p className="text-sm text-slate-500">
+        Manage the rides you’ve published
+      </p>
+    </div>
 
-      {error && <p style={{ color: "red" }}>{error}</p>}
+    {error && <p className="error mb-4">{error}</p>}
 
-      {rides.length === 0 ? (
+    {rides.length === 0 ? (
+      <div className="empty-state">
         <p>You haven’t created any rides yet.</p>
-      ) : (
-        rides.map((ride) => (
+        <span>Your published rides will appear here.</span>
+      </div>
+    ) : (
+      <div className="flex flex-col gap-4">
+        {rides.map((ride) => (
           <div
             key={ride.id}
-            style={{
-              border: "1px solid #ccc",
-              padding: "10px",
-              marginBottom: "10px",
-            }}
+            className="card flex items-center justify-between gap-6"
           >
-            <p>
-              <strong>{ride.from_text}</strong> →{" "}
-              <strong>{ride.to_text}</strong>
-            </p>
+            {/* Left side */}
+            <div className="flex flex-col gap-1 flex-1">
+              <div className="ride-route">
+                <strong>{ride.from_text}</strong>
+                <span className="arrow">→</span>
+                <strong>{ride.to_text}</strong>
+              </div>
 
-            <p>
-              Date: {new Date(ride.date).toLocaleDateString()}
-            </p>
+              <div className="ride-meta">
+                <span>
+                  {new Date(ride.date).toLocaleDateString()}
+                </span>
+                <span>•</span>
+                <span>{ride.time}</span>
+              </div>
+            </div>
 
-            <p>Time: {ride.time}</p>
-            <p>Status: {ride.status}</p>
+            {/* Right side */}
+            <div className="flex flex-col items-end gap-2 min-w-[200px]">
+              <div className={`status-badge ${ride.status}`}>
+                {ride.status}
+              </div>
 
-            <p>
-              Seats: {ride.seats_available} / {ride.seats_total}
-            </p>
+              <div className="seats-info">
+                Seats: {ride.seats_available} / {ride.seats_total}
+              </div>
 
-            <button
-              onClick={() => navigate(`/rides/${ride.id}/requests`)}
-            >
-              View Requests
-            </button>
+              <button
+                className="secondary"
+                onClick={() =>
+                  navigate(`/rides/${ride.id}/requests`)
+                }
+              >
+                View Requests
+              </button>
+            </div>
           </div>
-        ))
-      )}
-    </div>
-  );
+        ))}
+      </div>
+    )}
+  </div>
+);
+
+
 }
 
 export default MyRides;

@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import api from "../api/axios";
-import { logout } from "../auth/auth";
 import { useNavigate } from "react-router-dom";
 
 function Dashboard() {
@@ -8,67 +7,46 @@ function Dashboard() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    api
-      .get("/auth/me")
-      .then((res) => setUser(res.data))
-      .catch(() => {
-        logout();
-        navigate("/login");
-      });
+    api.get("/auth/me").then((res) => setUser(res.data));
   }, []);
 
+  if (!user) return <p>Loading...</p>;
+
   return (
-    <div>
-      <h2>Dashboard</h2>
+    <div className="container">
+      <div className="dashboard-header">
+        <h2>Welcome, {user.name}</h2>
+        <p className="muted">
+          Manage your rides and requests from here
+        </p>
+      </div>
 
-      {user ? (
-        <>
-          <p>Name: {user.name}</p>
-          <p>Role: {user.role}</p>
+      <div className="dashboard-grid">
+        {(user.role === "driver" || user.role === "both") && (
+          <div className="card action-card">
+            <h3>Create a Ride</h3>
+            <p>Offer a ride and manage passenger requests.</p>
+            <button onClick={() => navigate("/rides/new")}>
+              Create Ride
+            </button>
+          </div>
+        )}
 
-          {user.role === "driver" || user.role === "both" ? (
-            <div>
-              <h3>Driver Actions</h3>
-              <ul>
-                <li>
-                  <a href="/rides/new">Create Ride</a>
-                </li>
-                <li>
-                  <a href="/rides/my">My Rides</a>
-                </li>
-              </ul>
-            </div>
-          ) : null}
-
-          {user.role === "passenger" || user.role === "both" ? (
-              <div>
-                <h3>Passenger Actions</h3>
-                <ul>
-                  <li>
-                    <a href="/rides">Find Rides</a>
-                  </li>
-                  <li>
-                   <a href="/requests/my">My Requests</a>
-                  </li>
-                </ul>
-              </div>
-            ) : null}
-
-          <button
-            onClick={() => {
-              logout();
-              navigate("/login");
-            }}
-          >
-            Logout
-          </button>
-        </>
-      ) : (
-        <p>Loading...</p>
-      )}
+        {(user.role === "passenger" || user.role === "both") && (
+          <div className="card action-card">
+            <h3>Find Rides</h3>
+            <p>Search available rides and send requests.</p>
+            <button
+              className="secondary"
+              onClick={() => navigate("/rides")}
+            >
+              Find Rides
+            </button>
+          </div>
+        )}
+      </div>
     </div>
   );
-
 }
 
 export default Dashboard;

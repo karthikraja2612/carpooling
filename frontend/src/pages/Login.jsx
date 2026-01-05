@@ -14,13 +14,10 @@ function Login() {
     setError("");
 
     try {
-
-      const formData = new URLSearchParams();
       const res = await api.post("/auth/login", {
         email,
         password,
       });
-
 
       saveToken(res.data.access_token);
       navigate("/dashboard");
@@ -30,34 +27,38 @@ function Login() {
   };
 
   return (
-    <div>
-      <h2>Login</h2>
+    <div className="centered-page">
+      <div className="card form-card">
+        <h2>Login</h2>
 
-      {error && <p style={{ color: "red" }}>{error}</p>}
+        {error && <p className="error">{error}</p>}
 
-      <form onSubmit={handleLogin}>
-        <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
+        <form onSubmit={handleLogin}>
+          <div className="form-group">
+            <input
+              type="email"
+              placeholder="Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+          </div>
 
-        <br />
+          <div className="form-group">
+            <input
+              type="password"
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+          </div>
 
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
-
-        <br />
-
-        <button type="submit">Login</button>
-      </form>
+          <button type="submit" style={{ width: "100%" }}>
+            Login
+          </button>
+        </form>
+      </div>
     </div>
   );
 }
