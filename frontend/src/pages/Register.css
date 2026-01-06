@@ -1,0 +1,65 @@
+.register-page {
+  min-height: 100vh;
+  background: #c9f0ff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+.login-link {
+  position: absolute;
+  top: 20px;
+  right: 30px;
+  text-decoration: none;
+  font-weight: 500;
+  color: #0066ff;
+}
+
+.register-card {
+  width: 360px;
+  background: white;
+  padding: 30px 25px;
+  border-radius: 12px;
+  border: 2px solid #2f80ed;
+  text-align: center;
+}
+
+.register-icon {
+  width: 175px;
+  margin-bottom: 20px;
+}
+
+.register-card form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.register-card input,
+.register-card select {
+  padding: 10px;
+  border: none;
+  background: #e0e0e0;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.register-card button {
+  margin-top: 10px;
+  padding: 10px;
+  background: #99c9ff;
+  border: none;
+  border-radius: 4px;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.register-card button:hover {
+  background: #7fb7ff;
+}
+
+.error-text {
+  color: red;
+  font-size: 13px;
+}

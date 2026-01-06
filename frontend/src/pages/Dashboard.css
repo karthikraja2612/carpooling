@@ -1,0 +1,281 @@
+:root {
+  --nav-blue: #d1f0ff;
+  --hero-lime: #e8ffb8;
+  --rides-blue: #c9f0ff;
+  --input-bg: #d9d9d9;
+}
+
+.dashboard-container {
+  font-family: sans-serif;
+}
+
+/* ================= NAVBAR ================= */
+
+.navbar {
+  background-color: var(--nav-blue);
+  padding: 10px 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.nav-left,
+.nav-icons,
+.location-pill {
+  display: flex;
+  align-items: center;
+}
+
+.nav-left {
+  gap: 10px;
+}
+
+.nav-icons {
+  gap: 20px;
+}
+
+.nav-icon-img {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+}
+
+.icon-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+.icon-btn img {
+  width: 20px;
+  height: 20px;
+}
+
+.location-pill {
+  gap: 6px;
+  cursor: pointer;
+}
+
+.nav-svg {
+  height: 22px;
+  width: auto;
+}
+
+.location-pill span {
+  font-weight: 500;
+  font-size: 15px;
+  color: #1d1b20;
+}
+
+.location-pill:hover span {
+  text-decoration: underline;
+}
+
+/* ================= HERO SECTION ================= */
+
+.hero-section {
+  background-color: var(--hero-lime);
+  padding: 50px 8%;
+}
+
+.hero-content {
+  display: flex;
+  align-items: center;
+  gap: 60px;
+}
+
+.illustration-circle {
+  width: 200px;
+  height: 200px;
+  background: white;
+  border-radius: 50%;
+  border: 5px solid #6bbcff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.illustration-circle img {
+  width: 140px;
+}
+
+/* ================= SEARCH CARD ================= */
+
+.search-card {
+  background: #cccccc;
+  padding: 20px;
+  border-radius: 25px;
+  width: 350px;
+  position: relative;
+}
+
+.input-group {
+  display: flex;
+  align-items: center;
+  padding: 12px 15px;
+}
+
+.input-svg,
+.input-icon-img {
+  width: 22px;
+  height: 22px;
+  margin-right: 12px;
+  flex-shrink: 0;
+}
+
+.input-group input {
+  background: transparent;
+  border: none;
+  outline: none;
+  width: 100%;
+  font-size: 1.1rem;
+  color: #1d1b20;
+  line-height: 1;
+}
+
+/* Divider + Swap Button */
+
+.input-divider {
+  height: 1px;
+  background: #999;
+  margin: 0 15px;
+  position: relative;
+}
+
+.swap-btn-circular {
+  position: absolute;
+  right: 30px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 36px;
+  height: 36px;
+  background: var(--input-bg);
+  border: 1px solid #999;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 5;
+}
+
+.swap-btn-circular svg {
+  width: 20px;
+  height: 20px;
+}
+
+.swap-btn-circular:hover {
+  background: #c0c0c0;
+  border-color: #666;
+}
+
+/* ================= RIDES SECTION ================= */
+
+.rides-section {
+  background-color: var(--rides-blue);
+  padding: 40px 8%;
+  min-height: 300px;
+}
+
+.section-title {
+  margin-bottom: 20px;
+}
+
+.rides-grid {
+  display: flex;
+  gap: 20px;
+  overflow-x: auto;
+}
+
+.ride-card {
+  background: white;
+  border-radius: 12px;
+  width: 300px;
+  padding: 15px;
+}
+
+/* Ride Header */
+
+.ride-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 20px;
+}
+
+.time-display {
+  display: flex;
+  flex-direction: column;
+  font-size: 14px;
+}
+
+.main-time {
+  font-weight: bold;
+}
+
+.sub-time {
+  font-size: 12px;
+  color: #888;
+}
+
+.route-display {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 14px;
+}
+
+.connector-line {
+  width: 1px;
+  height: 20px;
+  background: #ccc;
+}
+
+.dot {
+  width: 6px;
+  height: 6px;
+  background: #bbb;
+  border-radius: 50%;
+}
+
+.price-tag {
+  font-weight: bold;
+}
+
+/* Driver Bar */
+
+.driver-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-top: 1px solid #eee;
+  padding-top: 10px;
+}
+
+.driver-avatar-circle {
+  width: 40px;
+  height: 40px;
+  background: #aeb4c2;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.driver-avatar-circle img {
+  width: 100%;
+}
+
+.d-name {
+  margin: 0;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.d-eta {
+  margin: 0;
+  font-size: 12px;
+  color: #777;
+}

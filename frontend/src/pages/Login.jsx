@@ -1,10 +1,12 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import api from "../api/axios";
 import { saveToken } from "../auth/auth";
+import "./Login.css";
 
 function Login() {
   const navigate = useNavigate();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -27,36 +29,38 @@ function Login() {
   };
 
   return (
-    <div className="centered-page">
-      <div className="card form-card">
-        <h2>Login</h2>
+    <div className="login-page">
+      <Link to="/register" className="register-link">
+        → Register
+      </Link>
 
-        {error && <p className="error">{error}</p>}
+      <div className="login-card">
+        <img
+          src="/car.png"
+          alt="car"
+          className="login-icon"
+        />
 
         <form onSubmit={handleLogin}>
-          <div className="form-group">
-            <input
-              type="email"
-              placeholder="Email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-          </div>
+          {error && <p className="error-text">{error}</p>}
 
-          <div className="form-group">
-            <input
-              type="password"
-              placeholder="Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-          </div>
+          <input
+            type="email"
+            placeholder="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
 
-          <button type="submit" style={{ width: "100%" }}>
-            Login
-          </button>
+          <input
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+
+          <button type="submit">Login</button>
         </form>
       </div>
     </div>
