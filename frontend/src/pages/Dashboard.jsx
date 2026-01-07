@@ -1,19 +1,173 @@
 import { useEffect, useState } from "react";
+import api from "../api/axios";
 import "./Dashboard.css";
+import { useNavigate } from "react-router-dom";
 
 function Dashboard() {
-  const [user, setUser] = useState({ name: "username" });
+  const navigate=useNavigate();
+  const [from, setFrom] = useState("");
+  const [to, setTo] = useState("");
+  const [user, setUser] = useState(null);
+  const [loading, setLoading]=useState(true);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
+
+  const handleSwap=()=>{
+    const temp=from;
+     setFrom(to);
+     setTo(temp);  
+  }
+
+  useEffect(() => {
+  const closeAll = () => {
+    setMenuOpen(false);
+    setUserMenuOpen(false);
+  };
+
+  window.addEventListener("click", closeAll);
+  return () => window.removeEventListener("click", closeAll);
+}, []);
+
+
+  useEffect(() => {
+  api.get("/auth/me")
+    .then((res) => {
+      setUser(res.data);   // logged in
+    })
+    .catch(() => {
+      setUser(null);       // not logged in
+    })
+    .finally(() => {
+      setLoading(false);
+    });
+  }, []);
+
+  if (loading) return null;
 
   return (
     <div className="dashboard-container">
       {/* 1. TOP NAVBAR */}
       <nav className="navbar">
         <div className="nav-left">
-          <img src="/user.png" alt="user" className="nav-icon-img" />
+  {/* Hamburger Button */}
+        <button
+          className="hamburger-btn"
+          onClick={(e) => {
+            e.stopPropagation();
+            setMenuOpen(!menuOpen)}}
+        >
+          <svg
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path d="M3 6H21" stroke="#1D1B20" strokeWidth="2" strokeLinecap="round"/>
+            <path d="M3 12H21" stroke="#1D1B20" strokeWidth="2" strokeLinecap="round"/>
+            <path d="M3 18H21" stroke="#1D1B20" strokeWidth="2" strokeLinecap="round"/>
+          </svg>
+        </button>
+
+            <div
+        className="user-trigger"
+        onClick={(e) => {
+  e.stopPropagation();
+  setUserMenuOpen(!userMenuOpen);
+}}
+      >
+        <img src="/user.png" alt="user" className="nav-icon-img" />
+
+        {user ? (
           <span className="username">{user.name}</span>
-        </div>
+        ) : (
+          <div className="auth-links">
+            <span className="auth-link" onClick={() => navigate("/login")}>
+              Login
+            </span>
+            /
+            <span className="auth-link" onClick={() => navigate("/register")}>
+              Sign up
+            </span>
+          </div>
+        )}
+      </div>
+        {user && userMenuOpen && (
+  <div className="user-dropdown">
+    <button
+      className="menu-item logout-item"
+      onClick={() => {
+        localStorage.removeItem("token");
+        setUser(null);
+        navigate("/login");
+      }}
+    >
+      <svg
+        width="18"
+        height="18"
+        viewBox="0 0 24 24"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M16 17L21 12L16 7"
+          stroke="#1D1B20"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        <path
+          d="M21 12H9"
+          stroke="#1D1B20"
+          strokeWidth="2"
+          strokeLinecap="round"
+        />
+        <path
+          d="M12 19H5C3.895 19 3 18.105 3 17V7C3 5.895 3.895 5 5 5H12"
+          stroke="#1D1B20"
+          strokeWidth="2"
+          strokeLinecap="round"
+        />
+      </svg>
+      <span>Logout</span>
+    </button>
+  </div>
+)}
+
+        {/* Dropdown Menu */}
+        {menuOpen && (
+          <div className="hamburger-menu">
+            <button className="menu-item">View Requests</button>
+            <button className="menu-item">My Rides</button>
+            <button className="menu-item">My Requests</button>
+          </div>
+        )}
+      </div>
         <div className="nav-right">
           <div className="nav-icons">
+            <button className="create-ride-btn"
+            onClick={()=>{
+              if(user){
+                navigate("/rides/new");
+              }else{
+                navigate("/login");
+              }
+            }}
+            >
+              <span className="plus-circle">
+                <svg
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path d="M12 5V19" stroke="#1d6cff" strokeWidth="2" strokeLinecap="round"/>
+                  <path d="M5 12H19" stroke="#1d6cff" strokeWidth="2" strokeLinecap="round"/>
+                </svg>
+              </span>
+              <span className="create-text">Create a ride</span>
+            </button>
             <button className="icon-btn"><img src="/notification.png" alt="notify" /></button>
             <button className="icon-btn"><img src="/settings.png" alt="settings" /></button>
             <div className="location-pill">
@@ -42,16 +196,47 @@ function Dashboard() {
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="input-svg">
                 <path d="M6 19V20C6 20.2833 5.90417 20.5208 5.7125 20.7125C5.52083 20.9042 5.28333 21 5 21H4C3.71667 21 3.47917 20.9042 3.2875 20.7125C3.09583 20.5208 3 20.2833 3 20V12L5.1 6C5.2 5.7 5.37917 5.45833 5.6375 5.275C5.89583 5.09167 6.18333 5 6.5 5H17.5C17.8167 5 18.1042 5.09167 18.3625 5.275C18.6208 5.45833 18.8 5.7 18.9 6L21 12V20C21 20.2833 20.9042 20.5208 20.7125 20.7125C20.5208 20.9042 20.2833 21 20 21H19C18.7167 21 18.4792 20.9042 18.2875 20.7125C18.0958 20.5208 18 20.2833 18 20V19H6ZM5.8 10H18.2L17.15 7H6.85L5.8 10ZM7.5 16C7.91667 16 8.27083 15.8542 8.5625 15.5625C8.85417 15.2708 9 14.9167 9 14.5C9 14.0833 8.85417 13.7292 8.5625 13.4375C8.27083 13.1458 7.91667 13 7.5 13C7.08333 13 6.72917 13.1458 6.4375 13.4375C6.14583 13.7292 6 14.0833 6 14.5C6 14.9167 6.14583 15.2708 6.4375 15.5625C6.72917 15.8542 7.08333 16 7.5 16ZM16.5 16C16.9167 16 17.2708 15.8542 17.5625 15.5625C17.8542 15.2708 18 14.9167 18 14.5C18 14.0833 17.8542 13.7292 17.5625 13.4375C17.2708 13.1458 16.9167 13 16.5 13C16.0833 13 15.7292 13.1458 15.4375 13.4375C15.1458 13.7292 15 14.0833 15 14.5C15 14.9167 15.1458 15.2708 15.4375 15.5625C15.7292 15.8542 16.0833 16 16.5 16ZM5 17H19V12H5V17Z" fill="#1D1B20"/>
               </svg>
-              <input type="text" placeholder="From" />
+              <input type="text" placeholder="From" value={from} onChange={(e)=>setFrom(e.target.value)}/>
             </div>
             
             {/* The Divider with Swap Button */}
             <div className="input-divider">
-                <button className="swap-btn-circular">
-                  <svg width="20" height="20" viewBox="0 0 51 51" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path 
-                      d="M16.9148 27.4864V12.316L11.4703 17.7604L8.4574 14.8004L19.0291 4.22864L29.6009 14.8004L26.5879 17.7604L21.1435 12.316V27.4864H16.9148ZM31.7152 46.5155L21.1435 35.9438L24.1564 32.9837L29.6009 38.4282V23.2577H33.8295V38.4282L39.274 32.9837L42.2869 35.9438L31.7152 46.5155Z" 
-                      fill="#1D1B20"
+                <button className="swap-btn-circular" onClick={(e)=>{
+                  e.stopPropagation();
+                  handleSwap();
+                }}>
+                  <svg
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M7 4L3 8L7 12"
+                      stroke="#1D1B20"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                    <path
+                      d="M3 8H17"
+                      stroke="#1D1B20"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                    />
+                    <path
+                      d="M17 20L21 16L17 12"
+                      stroke="#1D1B20"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                    <path
+                      d="M21 16H7"
+                      stroke="#1D1B20"
+                      strokeWidth="2"
+                      strokeLinecap="round"
                     />
                   </svg>
                 </button>
@@ -61,14 +246,54 @@ function Dashboard() {
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="input-svg">
                       <path d="M6 19V20C6 20.2833 5.90417 20.5208 5.7125 20.7125C5.52083 20.9042 5.28333 21 5 21H4C3.71667 21 3.47917 20.9042 3.2875 20.7125C3.09583 20.5208 3 20.2833 3 20V12L5.1 6C5.2 5.7 5.37917 5.45833 5.6375 5.275C5.89583 5.09167 6.18333 5 6.5 5H17.5C17.8167 5 18.1042 5.09167 18.3625 5.275C18.6208 5.45833 18.8 5.7 18.9 6L21 12V20C21 20.2833 20.9042 20.5208 20.7125 20.7125C20.5208 20.9042 20.2833 21 20 21H19C18.7167 21 18.4792 20.9042 18.2875 20.7125C18.0958 20.5208 18 20.2833 18 20V19H6ZM5.8 10H18.2L17.15 7H6.85L5.8 10ZM7.5 16C7.91667 16 8.27083 15.8542 8.5625 15.5625C8.85417 15.2708 9 14.9167 9 14.5C9 14.0833 8.85417 13.7292 8.5625 13.4375C8.27083 13.1458 7.91667 13 7.5 13C7.08333 13 6.72917 13.1458 6.4375 13.4375C6.14583 13.7292 6 14.0833 6 14.5C6 14.9167 6.14583 15.2708 6.4375 15.5625C6.72917 15.8542 7.08333 16 7.5 16ZM16.5 16C16.9167 16 17.2708 15.8542 17.5625 15.5625C17.8542 15.2708 18 14.9167 18 14.5C18 14.0833 17.8542 13.7292 17.5625 13.4375C17.2708 13.1458 16.9167 13 16.5 13C16.0833 13 15.7292 13.1458 15.4375 13.4375C15.1458 13.7292 15 14.0833 15 14.5C15 14.9167 15.1458 15.2708 15.4375 15.5625C15.7292 15.8542 16.0833 16 16.5 16ZM5 17H19V12H5V17Z" fill="#1D1B20"/>
                     </svg>
-                    <input type="text" placeholder="To" />
+                    <input type="text" placeholder="To" value={to} onChange={(e)=>setTo(e.target.value)}/>
                   </div>
-
+            {/* Divider between To and Date */}
+              <div className="input-divider"></div>
             {/* Date Input */}
-            <div className="input-group bottom">
-              <img src="/notification.png" alt="date" className="input-icon-img" />
-              <input type="text" placeholder="Today's date" onFocus={(e) => e.target.type = 'date'} />
+            <div className="input-group bottom date-group">
+              <svg
+                width="22"
+                height="22"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                className="input-svg calendar-icon"
+                onClick={(e) => {
+                  e.currentTarget.nextSibling.showPicker();
+                }}
+              >
+                <path
+                  d="M7 2V5M17 2V5M3 9H21M5 5H19C20.1046 5 21 5.89543 21 7V19C21 20.1046 20.1046 21 19 21H5C3.89543 21 3 20.1046 3 19V7C3 5.89543 3.89543 5 5 5Z"
+                  stroke="#1D1B20"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+
+              <input
+                type="date"
+                className="date-input"
+              />
             </div>
+            {/* Search Button */}
+            <button className="search-btn">
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                className="search-icon"
+              >
+                <path
+                  d="M10.5 18C6.35786 18 3 14.6421 3 10.5C3 6.35786 6.35786 3 10.5 3C14.6421 3 18 6.35786 18 10.5C18 12.2837 17.3679 13.9171 16.3125 15.1925L21 19.8799L19.8799 21L15.1925 16.3125C13.9171 17.3679 12.2837 18 10.5 18ZM10.5 5C7.46243 5 5 7.46243 5 10.5C5 13.5376 7.46243 16 10.5 16C13.5376 16 16 13.5376 16 10.5C16 7.46243 13.5376 5 10.5 5Z"
+                  fill="#1D1B20"
+                />
+              </svg>
+              <span>Search</span>
+            </button>
           </div>
         </div>
       </section>

@@ -5,8 +5,25 @@
   --input-bg: #d9d9d9;
 }
 
+/* ================= BASE ================= */
+
 .dashboard-container {
   font-family: sans-serif;
+}
+
+/* Common icon sizing */
+.icon-btn img,
+.input-svg,
+.input-icon-img,
+.calendar-icon {
+  width: 22px;
+  height: 22px;
+}
+
+/* Focus accessibility (no visual change unless keyboard used) */
+button:focus-visible {
+  outline: 2px solid #1d6cff;
+  outline-offset: 2px;
 }
 
 /* ================= NAVBAR ================= */
@@ -19,18 +36,16 @@
   align-items: center;
 }
 
-.nav-left,
-.nav-icons,
-.location-pill {
+.nav-left {
   display: flex;
   align-items: center;
-}
-
-.nav-left {
   gap: 10px;
+  position: relative;
 }
 
 .nav-icons {
+  display: flex;
+  align-items: center;
   gap: 20px;
 }
 
@@ -47,12 +62,9 @@
   cursor: pointer;
 }
 
-.icon-btn img {
-  width: 20px;
-  height: 20px;
-}
-
 .location-pill {
+  display: flex;
+  align-items: center;
   gap: 6px;
   cursor: pointer;
 }
@@ -86,11 +98,8 @@
 }
 
 .illustration-circle {
-  width: 200px;
+  width: 450px;
   height: 200px;
-  background: white;
-  border-radius: 50%;
-  border: 5px solid #6bbcff;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -108,20 +117,13 @@
   border-radius: 25px;
   width: 350px;
   position: relative;
+  overflow: visible;
 }
 
 .input-group {
   display: flex;
   align-items: center;
   padding: 12px 15px;
-}
-
-.input-svg,
-.input-icon-img {
-  width: 22px;
-  height: 22px;
-  margin-right: 12px;
-  flex-shrink: 0;
 }
 
 .input-group input {
@@ -137,19 +139,30 @@
 /* Divider + Swap Button */
 
 .input-divider {
-  height: 1px;
-  background: #999;
-  margin: 0 15px;
+  height: 24px;
+  background: none;
+  margin: 4px 15px;
   position: relative;
 }
+.input-divider::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: #999;
+  transform: translateY(-50%);
+}
+
 
 .swap-btn-circular {
   position: absolute;
   right: 30px;
   top: 50%;
   transform: translateY(-50%);
-  width: 36px;
-  height: 36px;
+  width: 50px;
+  height: 50px;
   background: var(--input-bg);
   border: 1px solid #999;
   border-radius: 50%;
@@ -157,17 +170,195 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  z-index: 5;
+  z-index: 20;        /* higher than inputs */
 }
 
+
 .swap-btn-circular svg {
-  width: 20px;
-  height: 20px;
+  width: 40px;
+  height: 40px;
+  transform: rotate(90deg);
 }
 
 .swap-btn-circular:hover {
   background: #c0c0c0;
   border-color: #666;
+}
+
+/* ================= SEARCH BUTTON ================= */
+
+.search-btn {
+  margin-top: 12px;
+  width: 100%;
+  height: 46px;
+  background: #d9d9d9;
+  border: 1px solid #999;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-size: 16px;
+  font-weight: 500;
+  color: #1d1b20;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.search-btn:hover {
+  background: #cfcfcf;
+  border-color: #777;
+}
+
+.search-icon {
+  width: 20px;
+  height: 20px;
+}
+
+/* ================= DATE INPUT ================= */
+
+.date-group {
+  cursor: pointer;
+}
+
+.date-input {
+  background: transparent;
+  border: none;
+  outline: none;
+  font-size: 1.1rem;
+  color: #1d1b20;
+  width: 100%;
+  cursor: pointer;
+}
+
+.date-input::-webkit-calendar-picker-indicator {
+  opacity: 0;
+  cursor: pointer;
+}
+
+.calendar-icon {
+  cursor: pointer;
+}
+
+/* ================= HAMBURGER MENU ================= */
+
+.hamburger-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+}
+
+.hamburger-menu {
+  position: absolute;
+  top: 48px;
+  left: 20px;
+  background: #ffffff;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  min-width: 160px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+}
+
+.menu-item {
+  color: #1d1b20;
+  background: none;
+  border: none;
+  padding: 10px 14px;
+  text-align: left;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.menu-item:hover {
+  background: #f2f2f2;
+}
+
+/* ================= USER AUTH ================= */
+
+.auth-links {
+  display: flex;
+  gap: 4px;
+  font-weight: 500;
+  font-size: 15px;
+}
+
+.auth-link {
+  cursor: pointer;
+  color: #1d6cff;
+}
+
+.auth-link:hover {
+  text-decoration: underline;
+}
+
+.user-trigger {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  position: relative;
+}
+
+.user-dropdown {
+  position: absolute;
+  top: 46px;
+  left: 0;
+  background: #ffffff;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  min-width: 140px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+}
+
+.logout-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* ================= CREATE RIDE ================= */
+
+.create-ride-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: none;
+  border: none;
+  padding: 4px 6px;
+  cursor: pointer;
+}
+
+.plus-circle {
+  width: 26px;
+  height: 26px;
+  border: 2px solid #1d6cff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.create-text {
+  font-size: 15px;
+  font-weight: 500;
+  color: #1d6cff;
+}
+
+.create-ride-btn:hover .plus-circle {
+  background: rgba(114, 244, 138, 0.08);
+}
+
+.create-ride-btn:hover .create-text {
+  text-decoration: underline;
 }
 
 /* ================= RIDES SECTION ================= */
